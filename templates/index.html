@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevOps CI/CD Flask Project</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #232526, #414345);
+      color: white;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #111;
+      padding: 1rem;
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+    }
+
+    section {
+      max-width: 600px;
+      margin: 40px auto;
+      background: rgba(255,255,255,0.1);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.2);
+    }
+
+    input, textarea {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #00b894;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #019875;
+    }
+
+    .feedback-container {
+      margin-top: 20px;
+      text-align: left;
+      background: rgba(0,0,0,0.3);
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    h2 {
+      color: #00cec9;
+    }
+
+    .desc {
+      color: #dfe6e9;
+      font-size: 1rem;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .message-box {
+      border-left: 3px solid #00cec9;
+      padding-left: 10px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>🚀 DevOps CI/CD Project — Flask + MySQL + Docker + Jenkins + AWS</header>
+
+  <section>
+    <h2>About the Project</h2>
+    <p class="desc">
+      In this project, I built a fully automated <b>CI/CD pipeline</b> to deploy a two-tier Flask application 
+      (Flask + MySQL) on AWS EC2 using <b>Jenkins, Docker,</b> and <b>Docker Compose</b>. 
+      It integrates GitHub for version control and ensures seamless, reliable, and hands-free deployments. 💡
+    </p>
+
+    <h3>💬 Share Your Thoughts</h3>
+    <input type="text" id="name" placeholder="Your Name">
+    <input type="email" id="email" placeholder="Your Email">
+    <textarea id="message" rows="4" placeholder="Your Feedback"></textarea>
+    <button onclick="submitFeedback()">Submit</button>
+
+    <h3>🗂 Recent Feedback</h3>
+    <div id="feedback-list" class="feedback-container">Loading feedback...</div>
+  </section>
+
+  <script>
+    async function submitFeedback() {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const message = document.getElementById("message").value.trim();
+
+      if (!name || !email || !message) {
+        alert("Please fill all fields!");
+        return;
+      }
+
+      const res = await fetch("/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, message })
+      });
+      const data = await res.json();
+      alert(data.message);
+      loadFeedback();
+      document.getElementById("message").value = "";
+    }
+
+    async function loadFeedback() {
+      const res = await fetch("/get_feedback");
+      const data = await res.json();
+      const list = document.getElementById("feedback-list");
+      list.innerHTML = data.length
+        ? data.map(f => `<div class='message-box'><b>${f.name}</b>: ${f.message}</div>`).join('')
+        : "No feedback yet. Be the first!";
+    }
+
+    window.onload = loadFeedback;
+  </script>
+</body>
+</html>
